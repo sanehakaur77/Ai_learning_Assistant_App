@@ -52,16 +52,7 @@ export const getQuizById = async (req, res, next) => {
     next(error);
   }
 };
-// @desc    Submit quiz answers
-// @route   POST /api/quizzes/:id/submit
 
-// @desc    Get a single quiz by ID
-// @route   GET /api/quizzes/quiz/:id
-// @access  Private
-
-// @desc    Submit quiz answers
-// @route   POST /api/quizzes/:id/submit
-// @access  Private
 export const submitQuiz = async (req, res, next) => {
   try {
     const { answers } = req.body;
@@ -70,7 +61,6 @@ export const submitQuiz = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         error: "Please provide answers array",
-        statusCode: 400,
       });
     }
 
@@ -83,7 +73,6 @@ export const submitQuiz = async (req, res, next) => {
       return res.status(404).json({
         success: false,
         error: "Quiz not found",
-        statusCode: 404,
       });
     }
 
@@ -91,59 +80,80 @@ export const submitQuiz = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         error: "Quiz already completed",
-        statusCode: 400,
       });
     }
 
-    // Process answers
     let correctCount = 0;
     const userAnswers = [];
 
-    answers.forEach((answer) => {
+    for (const answer of answers) {
       const { questionIndex, selectedAnswer } = answer;
 
-      if (questionIndex < quiz.questions.length) {
-        const question = quiz.questions[questionIndex];
-        const isCorrect = selectedAnswer === question.correctAnswer;
-
-        if (isCorrect) correctCount++;
-
-        userAnswers.push({
-          questionIndex,
-          selectedAnswer,
-          isCorrect,
-          answeredAt: new Date(),
-        });
+      if (
+        questionIndex < 0 ||
+        questionIndex >= quiz.questions.length
+      ) {
+        continue;
       }
-    });
 
-    // Calculate score
-    const score = Math.round((correctCount / quiz.totalQuestions) * 100);
+      const question = quiz.questions[questionIndex];
 
-    // Update quiz
+      // If frontend sends option index
+      const selectedOption =
+        typeof selectedAnswer === "number"
+          ? question.options[selectedAnswer]
+          : question.options[Number(selectedAnswer)];
+
+      // Remove prefixes like "01: " if present
+      const correctOption = question.correctAnswer
+        .replace(/^\d+:\s*/, "")
+        .trim();
+
+      const isCorrect =
+        (selectedOption || "").trim() === correctOption;
+
+      if (isCorrect) {
+        correctCount++;
+      }
+
+      userAnswers.push({
+        questionIndex,
+        selectedAnswer: selectedOption,
+        isCorrect,
+        answeredAt: new Date(),
+      });
+    }
+
+    const totalQuestions = quiz.questions.length;
+
+    const percentage = Math.round(
+      (correctCount / totalQuestions) * 100
+    );
+
     quiz.userAnswers = userAnswers;
-    quiz.score = score;
+    quiz.score = percentage; // Store percentage
+    quiz.totalQuestions = totalQuestions;
     quiz.completedAt = new Date();
 
     await quiz.save();
 
     res.status(200).json({
       success: true,
+      message: "Quiz submitted successfully",
       data: {
         quizId: quiz._id,
-        score,
+        score: percentage,
         correctCount,
-        totalQuestions: quiz.totalQuestions,
-        percentage: score,
+        totalQuestions,
+        percentage,
         userAnswers,
       },
-      message: "Quiz submitted successfully",
     });
   } catch (error) {
+    console.error(error);
     next(error);
   }
 };
-
 // @desc    Get quiz results
 // @route   GET /api/quizzes/:id/results
 // @access  Private

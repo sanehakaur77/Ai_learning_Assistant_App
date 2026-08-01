@@ -24,6 +24,7 @@ const ProfilePage = () => {
       const { data } = await authService.getProfile();
       setUsername(data.username);
       setEmail(data.email);
+      console.log(data)
     } catch (error) {
       toast.error("Failed to fetch profile data.");
     } finally {
@@ -93,7 +94,7 @@ const ProfilePage = () => {
                   <div className="flex items-center gap-3 p-3.5 bg-gray-50 rounded-xl border border-gray-200">
                     <User className="w-5 h-5 text-gray-400" />
                     <span className="text-gray-700 font-medium">
-                      {username}
+                      Saneha
                     </span>
                   </div>
                 </div>

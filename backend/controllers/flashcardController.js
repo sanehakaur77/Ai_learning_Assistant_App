@@ -49,8 +49,8 @@ export const getAllFlashcardSets = async (req, res, next) => {
 export const reviewFlashcard = async (req, res, next) => {
   try {
     const flashcardSet = await Flashcard.findOne({
-      "cards._id": req.params.cardId,
       userId: req.user._id,
+      "cards._id": req.params.cardId,
     });
 
     if (!flashcardSet) {
@@ -62,7 +62,7 @@ export const reviewFlashcard = async (req, res, next) => {
     }
 
     const cardIndex = flashcardSet.cards.findIndex(
-      (card) => card._id.toString() === req.params.cardId,
+      (card) => card._id.toString() === req.params.cardId
     );
 
     if (cardIndex === -1) {
@@ -73,16 +73,17 @@ export const reviewFlashcard = async (req, res, next) => {
       });
     }
 
-    // Update review info
+    // Update review information
     flashcardSet.cards[cardIndex].lastReviewed = new Date();
-    flashcardSet.cards[cardIndex].reviewCount += 1;
+    flashcardSet.cards[cardIndex].reviewCount =
+      (flashcardSet.cards[cardIndex].reviewCount || 0) + 1;
 
     await flashcardSet.save();
 
     res.status(200).json({
       success: true,
-      data: flashcardSet,
       message: "Flashcard reviewed successfully",
+      data: flashcardSet,
     });
   } catch (error) {
     next(error);

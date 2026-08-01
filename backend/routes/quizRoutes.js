@@ -10,13 +10,12 @@ import protect from "../middleware/auth.js";
 
 const router = express.Router();
 
-// All routes are protected
-router.use(protect);
 
-router.get("/:documentId", getQuizzes);
-router.get("/quiz/:id", getQuizById);
-router.post("/:id/submit", submitQuiz);
-router.get("/:id/results", getQuizResults);
-router.delete("/:id", deleteQuiz);
+
+router.get("/:documentId",protect,getQuizzes);
+router.get("/quiz/:id",protect, getQuizById);
+router.post("/:id/submit", protect,submitQuiz);
+router.get("/:id/results", protect,getQuizResults);
+router.delete("/:id",protect, deleteQuiz);
 
 export default router;

@@ -11,9 +11,6 @@ import {
   X,
 } from "lucide-react";
 
-// Colors taken directly from your screenshot
-const ACTIVE_GREEN = "#10B981";
-
 const navLinks = [
   { to: "/dashboard", icon: LayoutDashboard, text: "Dashboard" },
   { to: "/documents", icon: FileText, text: "Documents" },
@@ -35,94 +32,91 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   };
 
   const closeOnMobile = () => {
-    if (window.innerWidth < 768) toggleSidebar();
+    if (window.innerWidth < 768 && isSidebarOpen) {
+      toggleSidebar();
+    }
   };
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Mobile Backdrop Overlay */}
       <div
-        className={`fixed inset-0 bg-black/20 z-40 md:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300 ${
           isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={toggleSidebar}
         aria-hidden="true"
       />
 
-      {/* Sidebar */}
+      {/* Sidebar Drawer */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-white border-r z-50 transition-transform duration-300 ${
+        role="dialog"
+        aria-modal="true"
+        aria-label="Main Navigation"
+        className={`fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 z-50 transform transition-transform duration-300 ease-in-out will-change-transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
-        <div className="flex flex-col h-full p-4">
-          {/* Logo + Button */}
+        <div className="flex flex-col h-full p-4 sm:p-5">
+          {/* Header & Logo */}
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-2">
-              <div
-                className="p-2 rounded-xl"
-                style={{ backgroundColor: ACTIVE_GREEN }}
-              >
-                <BrainCircuit
-                  className="text-white"
-                  size={20}
-                  strokeWidth={2.5}
-                />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-emerald-500 text-white shadow-sm flex items-center justify-center">
+                <BrainCircuit size={22} strokeWidth={2.5} />
               </div>
 
-              <h1 className="text-[15px] font-bold text-gray-900">
+              <h1 className="text-base font-bold text-gray-900 tracking-tight">
                 AI Learning Assistant
               </h1>
             </div>
 
+            {/* Mobile Close Button */}
             <button
               onClick={toggleSidebar}
-              className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
+              className="md:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              aria-label="Close menu"
             >
               <X size={20} />
             </button>
           </div>
 
-          {/* Menu Items */}
-          <nav className="flex-1 space-y-1">
+          {/* Navigation Links */}
+          <nav className="flex-1 space-y-1.5">
             {navLinks.map(({ to, icon: Icon, text }) => (
               <NavLink
                 key={to}
                 to={to}
                 onClick={closeOnMobile}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2 rounded-xl transition-all ${
+                  `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? "text-white shadow-md"
-                      : "text-gray-700 hover:bg-gray-100"
+                      ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   }`
-                }
-                style={({ isActive }) =>
-                  isActive ? { backgroundColor: ACTIVE_GREEN } : {}
                 }
               >
                 {({ isActive }) => (
                   <>
                     <Icon
-                      size={18}
+                      size={20}
                       strokeWidth={2.2}
-                      className={isActive ? "text-white" : "text-gray-700"}
+                      className={isActive ? "text-white" : "text-gray-500"}
                     />
-                    <span className="font-medium">{text}</span>
+                    <span>{text}</span>
                   </>
                 )}
               </NavLink>
             ))}
           </nav>
 
-          {/* Logout */}
-          <div className="mt-auto pt-4 border-t">
+          {/* Footer / Logout Button */}
+          <div className="mt-auto pt-4 border-t border-gray-100">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              className="flex items-center gap-3 px-3.5 py-2.5 w-full rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/20"
             >
-              <LogOut size={18} />
-              <span className="font-medium">Logout</span>
+              <LogOut size={20} strokeWidth={2} />
+              <span>Logout</span>
             </button>
           </div>
         </div>

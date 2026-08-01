@@ -11,12 +11,15 @@ import AIActions from "../ai/AiActions";
 import FlashcardManager from "../Flashcards/FlashCardManager";
 import QuizManager from "../Quizzes/QuizManager";
 import Header from "../../components/layout/Header";
+import Sidebar from "../../components/layout/Sidebar";
+import { BASE_URL } from "../../utils/apiPaths";
+
 const DocumentDetailPage = () => {
   const { id } = useParams();
   const [document, setDocument] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Content");
-
+const [sidebarOpen, setSidebarOpen] = useState(false);
   useEffect(() => {
     const fetchDocumentDetails = async () => {
       try {
@@ -42,7 +45,7 @@ const DocumentDetailPage = () => {
       return filePath;
     }
 
-    const baseUrl = process.env.REACT_APP_API_URL || "http://localhost:8082";
+    const baseUrl = BASE_URL;
     return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
   };
 
@@ -62,6 +65,10 @@ const DocumentDetailPage = () => {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         {/* Top Bar */}
+        <Sidebar
+      isOpen={sidebarOpen}
+      onClose={() => setSidebarOpen(false)}
+    />
         <div className="flex justify-between items-center mb-4 border-b pb-3">
           <span className="font-semibold text-gray-700 text-lg">
             Document Viewer

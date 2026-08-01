@@ -13,28 +13,32 @@ const flashcardSchema = new mongoose.Schema(
       required: true,
     },
     cards: [
-      {
-        question: { type: String, required: true },
-        answer: { type: String, required: true },
-        difficulty: {
-          type: String,
-          enum: ["easy", "medium", "hard"],
-          default: "medium",
-        },
-        lastReviewed: {
-          type: Date,
-          default: null,
-        },
-        interval: {
-          type: Number,
-          default: 0,
-        },
-        isStarred: {
-          type: Boolean,
-          default: false,
-        },
-      },
-    ],
+  {
+    question: { type: String, required: true },
+    answer: { type: String, required: true },
+    difficulty: {
+      type: String,
+      enum: ["easy", "medium", "hard"],
+      default: "medium",
+    },
+    lastReviewed: {
+      type: Date,
+      default: null,
+    },
+    reviewCount: {
+      type: Number,
+      default: 0,
+    },
+    interval: {
+      type: Number,
+      default: 0,
+    },
+    isStarred: {
+      type: Boolean,
+      default: false,
+    },
+  },
+],
   },
   {
     timestamps: true,

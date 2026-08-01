@@ -181,7 +181,7 @@ const DocumentListPage = () => {
 
                 <button
                   onClick={() => setIsUploadModalOpen(true)}
-                  className="bg-[#10B981] hover:bg-emerald-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm"
+                  className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2.5 rounded-xl text-white flex items-center gap-2 transition-all shadow-sm"
                 >
                   <Plus size={20} strokeWidth={3} />
                   Upload Document
